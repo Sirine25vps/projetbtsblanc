@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace projetbtsblanc.Views
 {
-    public partial class Form5 : Form
+    public partial class AddMedicamentForm : Form
     {
-        public Form5()
+        public AddMedicamentForm()
         {
             InitializeComponent();
         }

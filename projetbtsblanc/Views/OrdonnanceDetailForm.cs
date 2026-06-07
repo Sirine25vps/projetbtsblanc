@@ -11,14 +11,14 @@ using System.Windows.Forms;
 
 namespace projetbtsblanc.Views
 {
-    public partial class PatientDetailForm : Form
+    public partial class OrdonnanceDetailForm : Form
     {
         private readonly int _idPatient;
         private readonly PatientController _controller;
         // Le constructeur prend l'ID du patient à afficher.
         // C'est la méthode classique pour passer un paramètre
         // à un formulaire WinForms.
-        public PatientDetailForm(int idPatient)
+        public OrdonnanceDetailForm(int idPatient)
         {
             InitializeComponent();
             _idPatient = idPatient;

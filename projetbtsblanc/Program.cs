@@ -1,20 +1,17 @@
-
-using projetbtsblanc.Views;
+using System;
+using System.Windows.Forms;
+using projetbtsblanc.Views; 
 
 namespace projetbtsblanc
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new PatientListForm());
+
+            // lance le formulaire de connexion
+            Application.Run(new LoginForm());
         }
     }
 }

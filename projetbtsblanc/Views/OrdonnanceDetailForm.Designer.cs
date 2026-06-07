@@ -1,6 +1,6 @@
 ﻿namespace projetbtsblanc.Views
 {
-    partial class PatientDetailForm
+    partial class OrdonnanceDetailForm
     {
         /// <summary>
         /// Required designer variable.

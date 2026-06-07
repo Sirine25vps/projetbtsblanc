@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace projetbtsblanc.Models
 {
     public class Medicament
-        {
-            public string Nom { get; set; }
-            public string Dosage { get; set; }
-            public string Unite { get; set; }
+    {
+        public string CodeMedicament { get; set; } 
+        public string Nom { get; set; }
+        public string Dosage { get; set; }
+        public string Unite { get; set; }
 
-            public Medicament(string nom, string dosage)
-            {
+        public Medicament(string code, string nom, string dosage, string unite)
+        {
+            CodeMedicament = code;
             Nom = nom;
             Dosage = dosage;
-            Unite = Unite;
-            }
+            Unite = unite;
         }
     }
+}

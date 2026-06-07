@@ -1,38 +1,32 @@
-﻿using projetbtsblanc.Models;
-using System; 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace projetbtsblanc.Models
 {
+    // "personne" indique que Medecin hérite de la classe Personne
     public class Medecin : Personne
     {
+        // On ne garde que les propriétés uniques au Médecin
+        public string NumeroRPPS { get; set; }
+        public string Specialite { get; set; }
 
-        private string rpps;
-        private string email;
-        private string password;
-
-        public string getRpps() { return this.rpps; }
-        public string getEmail() { return this.email; }
-        public string getPassword() { return this.password; }
-
-        public void setRpps(string newRpps) { this.rpps = newRpps; }
-        public void setEmail(string newEmail) { this.email = newEmail; }
-        public void setPassword(string newPassword) { this.password = newPassword; }
-        
-        public Medecin () {
-
-        }
-        public Medecin(string rpps, string email, string password)// string name, string firstname, string birthdate)
+        // Le constructeur complet transmet les infos communes à la classe mère via ": base(...)"
+        public Medecin(string nom, string prenom, DateTime dateNaissance, string numeroRPPS, string specialite)
+            : base(nom, prenom, dateNaissance)
         {
-            //:base(name, firstname, birthdate)
-            this.rpps = rpps;
-            this.email = email;
-            this.password = password;
+            NumeroRPPS = numeroRPPS;
+            Specialite = specialite;
         }
 
+        // Le constructeur sans paramètres appelle aussi celui de la classe mère
+        public Medecin() : base()
+        {
+        }
+
+        // On redéfinit la présentation spécifiquement pour le médecin
+        // Cela renvoie "Dr NOM, Spécialité"
+        public override string Presentation()
+        {
+            return $"Dr {Nom}, {Specialite}";
+        }
     }
-  
 }

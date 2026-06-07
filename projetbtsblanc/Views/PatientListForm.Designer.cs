@@ -30,9 +30,11 @@
         {
             dgvPatients = new DataGridView();
             btnRechercher = new Button();
-            label1 = new Label();
+            lblRecherche = new Label();
             txtRecherche = new TextBox();
             btnReset = new Button();
+            cmbAllergies = new ComboBox();
+            lblAllergie = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvPatients).BeginInit();
             SuspendLayout();
             // 
@@ -49,33 +51,33 @@
             // 
             // btnRechercher
             // 
-            btnRechercher.Location = new Point(445, 84);
+            btnRechercher.Location = new Point(610, 112);
             btnRechercher.Name = "btnRechercher";
             btnRechercher.Size = new Size(112, 34);
             btnRechercher.TabIndex = 1;
             btnRechercher.Text = "OK";
             btnRechercher.UseVisualStyleBackColor = true;
-            btnRechercher.Click += btnRechercher_Click;
+            btnRechercher.Click += btnRechercher_Click_1;
             // 
-            // label1
+            // lblRecherche
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(111, 56);
-            label1.Name = "label1";
-            label1.Size = new Size(97, 25);
-            label1.TabIndex = 3;
-            label1.Text = "Rechercher";
+            lblRecherche.AutoSize = true;
+            lblRecherche.Location = new Point(108, 24);
+            lblRecherche.Name = "lblRecherche";
+            lblRecherche.Size = new Size(182, 25);
+            lblRecherche.TabIndex = 3;
+            lblRecherche.Text = "Rechercher un patient";
             // 
             // txtRecherche
             // 
-            txtRecherche.Location = new Point(111, 84);
+            txtRecherche.Location = new Point(108, 52);
             txtRecherche.Name = "txtRecherche";
-            txtRecherche.Size = new Size(150, 31);
+            txtRecherche.Size = new Size(186, 31);
             txtRecherche.TabIndex = 4;
             // 
             // btnReset
             // 
-            btnReset.Location = new Point(575, 84);
+            btnReset.Location = new Point(585, 433);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(171, 34);
             btnReset.TabIndex = 5;
@@ -83,14 +85,33 @@
             btnReset.UseVisualStyleBackColor = true;
             btnReset.Click += btnReset_Click;
             // 
+            // cmbAllergies
+            // 
+            cmbAllergies.FormattingEnabled = true;
+            cmbAllergies.Location = new Point(112, 100);
+            cmbAllergies.Name = "cmbAllergies";
+            cmbAllergies.Size = new Size(182, 33);
+            cmbAllergies.TabIndex = 6;
+            // 
+            // lblAllergie
+            // 
+            lblAllergie.AutoSize = true;
+            lblAllergie.Location = new Point(21, 103);
+            lblAllergie.Name = "lblAllergie";
+            lblAllergie.Size = new Size(85, 25);
+            lblAllergie.TabIndex = 7;
+            lblAllergie.Text = "Allergie : ";
+            // 
             // PatientListForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(925, 479);
+            Controls.Add(lblAllergie);
+            Controls.Add(cmbAllergies);
             Controls.Add(btnReset);
             Controls.Add(txtRecherche);
-            Controls.Add(label1);
+            Controls.Add(lblRecherche);
             Controls.Add(btnRechercher);
             Controls.Add(dgvPatients);
             Name = "PatientListForm";
@@ -105,8 +126,10 @@
 
         private DataGridView dgvPatients;
         private Button btnRechercher;
-        private Label label1;
+        private Label lblRecherche;
         private TextBox txtRecherche;
         private Button btnReset;
+        private ComboBox cmbAllergies;
+        private Label lblAllergie;
     }
 }
