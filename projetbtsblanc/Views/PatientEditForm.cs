@@ -1,38 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using projetbtsblanc.Models;
+using projetbtsblanc.Controllers;
 
 namespace projetbtsblanc.Views
 {
     public partial class PatientEditForm : Form
     {
-        // Propriété publique pour récupérer le résultat depuis la liste 
         public Patient PatientSaisi { get; private set; }
 
-        // Constructeur 1 : Création d'un nouveau patient
+        // Liste pour stocker les allergies cochées
+        public List<string> AllergiesSelectionnees { get; private set; }
+
+        private readonly AllergieController _allergieController;
+
+        // Constructeur 1 : Création
         public PatientEditForm()
         {
             InitializeComponent();
+            _allergieController = new AllergieController();
             this.Text = "Nouveau Patient";
+            ChargerListeAllergies(null);
         }
 
-        // Constructeur 2 : Modification d'un patient existant
+        // Constructeur 2 : Modification
         public PatientEditForm(Patient patientAEditer)
         {
             InitializeComponent();
+            _allergieController = new AllergieController();
             this.Text = "Modifier Patient";
 
-            // On pré-remplit les champs du formulaire avec les données du patient cliqué
             txtNom.Text = patientAEditer.Nom;
             txtPrenom.Text = patientAEditer.Prenom;
             dtpDateNaissance.Value = patientAEditer.DateNaissance;
             txtNumeroSecu.Text = patientAEditer.NumeroSecu;
-
-            // Pré-remplissage des nouveaux champs
-            numPoids.Value = (decimal)patientAEditer.Poids;
-            numTaille.Value = (decimal)patientAEditer.Taille;
             cmbSexe.SelectedItem = patientAEditer.Sexe;
+
+           
             txtPathologies.Text = patientAEditer.Pathologies;
+
+        // On charge les allergies et on coche celles que le patient a déjà
+        ChargerListeAllergies(patientAEditer.Allergies);
+        }
+
+        private void ChargerListeAllergies(List<string> allergiesDuPatient)
+        {
+            List<string> toutesLesAllergies = _allergieController.ObtenirLibelles();
+            if (toutesLesAllergies == null) return;
+
+            foreach (string allergie in toutesLesAllergies)
+            {
+                // Si l'allergie est dans la liste du patient, on la coche (true), sinon false
+                bool estCochee = allergiesDuPatient != null && allergiesDuPatient.Contains(allergie);
+                clbAllergies.Items.Add(allergie, estCochee);
+            }
         }
 
         private void btnAnnuler_Click(object sender, EventArgs e)
@@ -43,14 +65,12 @@ namespace projetbtsblanc.Views
 
         private void btnEnregistrer_Click(object sender, EventArgs e)
         {
-            // 1. Validation assouplie (on vérifie juste que ce n'est pas vide)
             if (string.IsNullOrWhiteSpace(txtNom.Text) || string.IsNullOrWhiteSpace(txtNumeroSecu.Text))
             {
-                MessageBox.Show("Le nom et le numéro de sécurité sociale sont obligatoires.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Le nom et le n° de sécu sont obligatoires.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Création de l'objet
             PatientSaisi = new Patient(
                 txtNom.Text.Trim(),
                 txtPrenom.Text.Trim(),
@@ -58,17 +78,17 @@ namespace projetbtsblanc.Views
                 txtNumeroSecu.Text.Trim()
             );
 
-            /// 3. Ajout des autres propriétés
-            PatientSaisi.Poids = Convert.ToDouble(numPoids.Value);
-            PatientSaisi.Taille = Convert.ToDouble(numTaille.Value);
+            PatientSaisi.Sexe = cmbSexe.SelectedItem != null ? cmbSexe.SelectedItem.ToString() : "Non spécifié";
 
-            if (cmbSexe.SelectedItem != null)
-                PatientSaisi.Sexe = cmbSexe.SelectedItem.ToString();
-            else
-                PatientSaisi.Sexe = "Non spécifié"; 
-
-
+            
             PatientSaisi.Pathologies = txtPathologies.Text.Trim();
+
+            // On récupère toutes les cases cochées
+            AllergiesSelectionnees = new List<string>();
+            foreach (var item in clbAllergies.CheckedItems)
+            {
+                AllergiesSelectionnees.Add(item.ToString());
+            }
 
             this.DialogResult = DialogResult.OK;
             this.Close();

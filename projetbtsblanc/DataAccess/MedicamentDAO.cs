@@ -21,10 +21,11 @@ namespace projetbtsblanc.DataAccess
                 while (r.Read())
                 {
                     liste.Add(new Medicament(
-                        r.GetString("codeMedicament"),
-                        r.GetString("nom"),
-                        r.GetString("dosage"),
-                        r.GetString("unite")
+                        r["codeMedicament"] != DBNull.Value ? r["codeMedicament"].ToString() : "",
+                        r["nom"] != DBNull.Value ? r["nom"].ToString() : "",
+                        // Lecture sécurisée : empêche le plantage si la case est vide
+                        r["dosage"] != DBNull.Value ? r["dosage"].ToString() : "",
+                        r["unite"] != DBNull.Value ? r["unite"].ToString() : ""
                     ));
                 }
             }

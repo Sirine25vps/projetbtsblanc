@@ -11,7 +11,8 @@ namespace GSB.Ordonnances.DataAccess
         "Uid=gsb;" +
         "Pwd=gsbpass;" +
         "AllowPublicKeyRetrieval=True;" +
-        "SslMode=Preferred;";
+        "SslMode=Preferred;" +
+        "CharSet=utf8mb4;"; // L'ajout indispensable pour régler le bug des accents
 
         public static MySqlConnection Ouvrir()
         {

@@ -19,7 +19,6 @@
         {
             lblIdentifiant = new Label();
             label2 = new Label();
-            lblInscription = new LinkLabel();
             btnConnexion = new Button();
             txtEmail = new TextBox();
             txtMdp = new TextBox();
@@ -28,8 +27,8 @@
             // lblIdentifiant
             // 
             lblIdentifiant.AutoSize = true;
-            lblIdentifiant.BackColor = SystemColors.ButtonHighlight;
-            lblIdentifiant.Location = new Point(270, 94);
+            lblIdentifiant.BackColor = Color.Transparent;
+            lblIdentifiant.Location = new Point(268, 94);
             lblIdentifiant.Name = "lblIdentifiant";
             lblIdentifiant.Size = new Size(122, 25);
             lblIdentifiant.TabIndex = 0;
@@ -43,17 +42,6 @@
             label2.Size = new Size(120, 25);
             label2.TabIndex = 1;
             label2.Text = "Mot de passe";
-            // 
-            // lblInscription
-            // 
-            lblInscription.AutoSize = true;
-            lblInscription.Location = new Point(290, 346);
-            lblInscription.Name = "lblInscription";
-            lblInscription.Size = new Size(95, 25);
-            lblInscription.TabIndex = 2;
-            lblInscription.TabStop = true;
-            lblInscription.Text = "Inscription";
-           
             // 
             // btnConnexion
             // 
@@ -80,19 +68,18 @@
             txtMdp.TabIndex = 5;
             txtMdp.UseSystemPasswordChar = true;
             // 
-            // Form1
+            // LoginForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(673, 422);
             Controls.Add(txtMdp);
             Controls.Add(txtEmail);
             Controls.Add(btnConnexion);
-            Controls.Add(lblInscription);
             Controls.Add(label2);
             Controls.Add(lblIdentifiant);
-            Name = "Form1";
-            Text = "Form1";
+            Name = "LoginForm";
+            Text = "Connexion";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -101,7 +88,6 @@
 
         private Label lblIdentifiant;
         private Label label2;
-        private LinkLabel lblInscription;
         private Button btnConnexion;
         private TextBox txtEmail;
         private TextBox txtMdp;

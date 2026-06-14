@@ -26,10 +26,13 @@ namespace projetbtsblanc.Controllers
             
             return _dao.ObtenirMedicamentsParOrdonnance(idOrdonnance);
         }
-
-        internal object ObtenirLignes(int id)
+        public List<LignePrescription> ObtenirLignes(int idOrdonnance)
         {
-            throw new NotImplementedException();
+            return _dao.ObtenirLignes(idOrdonnance);
+        }
+        public List<Ordonnance> ObtenirOrdonnancesParPatient(int idPatient)
+        {
+            return _dao.ObtenirParPatient(idPatient);
         }
     }
 }

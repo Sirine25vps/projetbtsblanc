@@ -4,22 +4,24 @@ using System.Text;
 
 namespace projetbtsblanc.Models
 {
-    public class Prescription
+    // On renomme la classe pour correspondre au DAO
+    public class LignePrescription
     {
-        public Medicament Medicament { get; set; }
+        // On utilise des string simples pour que le tableau s'affiche correctement
+        public string NomMedicament { get; set; }
         public string Posologie { get; set; }
         public int DureeJours { get; set; }
 
-        public Prescription(Medicament medicament, string posologie, int dureeJours)
+        public LignePrescription(string nomMedicament, string posologie, int dureeJours)
         {
-            Medicament = medicament;
+            NomMedicament = nomMedicament;
             Posologie = posologie;
             DureeJours = dureeJours;
         }
+
         public string Afficher()
         {
-            return $"Médicament : {Medicament.Nom} {Medicament.Dosage}{Medicament.Unite} : {Posologie} pendant {DureeJours} jours.";
+            return $"Médicament : {NomMedicament} : {Posologie} pendant {DureeJours} jours.";
         }
-
     }
 }

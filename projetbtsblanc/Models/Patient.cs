@@ -3,18 +3,25 @@ using System.Collections.Generic;
 
 namespace projetbtsblanc.Models
 {
-    // Patient hérite de la classe Personne
     public class Patient : Personne
     {
-     
         public string NumeroSecu { get; set; }
         public List<string> Allergies { get; set; }
-        public double Poids { get; set; }
-        public double Taille { get; set; }
         public string Sexe { get; set; }
+
+        // 1. la propriété pour la base de données (écrivable)
         public string Pathologies { get; set; }
-       
-       
+
+        // 2. Une propriété pour l'affichage dans le tableau (lecture seule)
+        public string ListeAllergies
+        {
+            get
+            {
+                if (Allergies == null || Allergies.Count == 0) return "Aucune";
+                return string.Join(", ", Allergies);
+            }
+        }
+
         public Patient(string nom, string prenom, DateTime dateNaissance, string numeroSecu)
             : base(nom, prenom, dateNaissance)
         {
@@ -27,12 +34,10 @@ namespace projetbtsblanc.Models
             Allergies = new List<string>();
         }
 
-        public bool EstMajeur()
-        {
-            return CalculerAge() >= 18;
-        }
- 
-        public override string Presentation()
+        public bool EstMajeur() => CalculerAge() >= 18;
+        public override string Presentation() => $"{Prenom} {Nom}";
+
+        public override string ToString()
         {
             return $"{Prenom} {Nom}";
         }

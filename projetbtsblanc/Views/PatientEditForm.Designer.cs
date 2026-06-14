@@ -36,18 +36,14 @@
             dtpDateNaissance = new DateTimePicker();
             btnEnregistrer = new Button();
             btnAnnuler = new Button();
-            Taille = new Label();
-            numTaille = new NumericUpDown();
-            label5 = new Label();
-            numPoids = new NumericUpDown();
             lblSexe = new Label();
             cmbSexe = new ComboBox();
             txtNumeroSecu = new MaskedTextBox();
             label4 = new Label();
             label8 = new Label();
+            clbAllergies = new CheckedListBox();
+            label6 = new Label();
             txtPathologies = new RichTextBox();
-            ((System.ComponentModel.ISupportInitialize)numTaille).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numPoids).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -71,7 +67,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(79, 222);
+            label3.Location = new Point(75, 222);
             label3.Name = "label3";
             label3.Size = new Size(159, 25);
             label3.TabIndex = 2;
@@ -119,45 +115,6 @@
             btnAnnuler.UseVisualStyleBackColor = true;
             btnAnnuler.Click += btnAnnuler_Click;
             // 
-            // Taille
-            // 
-            Taille.AutoSize = true;
-            Taille.Location = new Point(447, 57);
-            Taille.Name = "Taille";
-            Taille.Size = new Size(49, 25);
-            Taille.TabIndex = 13;
-            Taille.Text = "Taille";
-            Taille.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // numTaille
-            // 
-            numTaille.DecimalPlaces = 2;
-            numTaille.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            numTaille.Location = new Point(447, 87);
-            numTaille.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
-            numTaille.Name = "numTaille";
-            numTaille.Size = new Size(76, 31);
-            numTaille.TabIndex = 12;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(335, 57);
-            label5.Name = "label5";
-            label5.Size = new Size(55, 25);
-            label5.TabIndex = 11;
-            label5.Text = "Poids";
-            // 
-            // numPoids
-            // 
-            numPoids.DecimalPlaces = 1;
-            numPoids.Increment = new decimal(new int[] { 5, 0, 0, 65536 });
-            numPoids.Location = new Point(335, 87);
-            numPoids.Maximum = new decimal(new int[] { 300, 0, 0, 0 });
-            numPoids.Name = "numPoids";
-            numPoids.Size = new Size(76, 31);
-            numPoids.TabIndex = 10;
-            // 
             // lblSexe
             // 
             lblSexe.AutoSize = true;
@@ -197,35 +154,50 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(79, 304);
+            label8.Location = new Point(335, 313);
             label8.Name = "label8";
-            label8.Size = new Size(104, 25);
+            label8.Size = new Size(170, 25);
             label8.TabIndex = 22;
-            label8.Text = "Pathologies";
+            label8.Text = "Notes / pathologies";
+            // 
+            // clbAllergies
+            // 
+            clbAllergies.FormattingEnabled = true;
+            clbAllergies.Location = new Point(79, 341);
+            clbAllergies.Name = "clbAllergies";
+            clbAllergies.Size = new Size(190, 60);
+            clbAllergies.TabIndex = 23;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(79, 313);
+            label6.Name = "label6";
+            label6.Size = new Size(79, 25);
+            label6.TabIndex = 24;
+            label6.Text = "Allergies";
             // 
             // txtPathologies
             // 
-            txtPathologies.Location = new Point(79, 332);
+            txtPathologies.Location = new Point(335, 341);
             txtPathologies.Name = "txtPathologies";
-            txtPathologies.Size = new Size(540, 138);
-            txtPathologies.TabIndex = 21;
+            txtPathologies.Size = new Size(402, 127);
+            txtPathologies.TabIndex = 25;
             txtPathologies.Text = "";
             // 
             // PatientEditForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(746, 552);
-            Controls.Add(label8);
+            ClientSize = new Size(781, 551);
             Controls.Add(txtPathologies);
+            Controls.Add(label6);
+            Controls.Add(clbAllergies);
+            Controls.Add(label8);
             Controls.Add(txtNumeroSecu);
             Controls.Add(label4);
             Controls.Add(lblSexe);
             Controls.Add(cmbSexe);
-            Controls.Add(Taille);
-            Controls.Add(numTaille);
-            Controls.Add(label5);
-            Controls.Add(numPoids);
             Controls.Add(btnAnnuler);
             Controls.Add(btnEnregistrer);
             Controls.Add(dtpDateNaissance);
@@ -237,9 +209,8 @@
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "PatientEditForm";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "PatientEditForm";
-            ((System.ComponentModel.ISupportInitialize)numTaille).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numPoids).EndInit();
+            Text = "Modifier patient";
+            TopMost = true;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -254,15 +225,13 @@
         private DateTimePicker dtpDateNaissance;
         private Button btnEnregistrer;
         private Button btnAnnuler;
-        private Label Taille;
-        private NumericUpDown numTaille;
-        private Label label5;
-        private NumericUpDown numPoids;
         private Label lblSexe;
         private ComboBox cmbSexe;
         private MaskedTextBox txtNumeroSecu;
         private Label label4;
         private Label label8;
+        private CheckedListBox clbAllergies;
+        private Label label6;
         private RichTextBox txtPathologies;
     }
 }

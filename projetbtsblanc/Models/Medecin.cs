@@ -28,5 +28,9 @@ namespace projetbtsblanc.Models
         {
             return $"Dr {Nom}, {Specialite}";
         }
+        public override string ToString()
+        {
+            return $"Dr. {Nom}"; 
+        }
     }
 }

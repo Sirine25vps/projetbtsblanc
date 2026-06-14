@@ -101,11 +101,12 @@
             // 
             // dgvHistorique
             // 
+            dgvHistorique.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvHistorique.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvHistorique.Location = new Point(327, 178);
             dgvHistorique.Name = "dgvHistorique";
             dgvHistorique.RowHeadersWidth = 62;
-            dgvHistorique.Size = new Size(360, 241);
+            dgvHistorique.Size = new Size(636, 315);
             dgvHistorique.TabIndex = 6;
             // 
             // label6
@@ -128,7 +129,8 @@
             // 
             // btnFermer
             // 
-            btnFermer.Location = new Point(575, 433);
+            btnFermer.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnFermer.Location = new Point(851, 507);
             btnFermer.Name = "btnFermer";
             btnFermer.Size = new Size(112, 34);
             btnFermer.TabIndex = 9;
@@ -176,11 +178,11 @@
             lblPrenom.Size = new Size(0, 25);
             lblPrenom.TabIndex = 13;
             // 
-            // PatientDetailForm
+            // OrdonnanceDetailForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 479);
+            ClientSize = new Size(1076, 553);
             Controls.Add(lblAge);
             Controls.Add(lblPrenom);
             Controls.Add(lblNom);
@@ -196,8 +198,8 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Name = "PatientDetailForm";
-            Text = "PatientDetailForm";
+            Name = "OrdonnanceDetailForm";
+            Text = "Fiche patient";
             ((System.ComponentModel.ISupportInitialize)dgvHistorique).EndInit();
             ResumeLayout(false);
             PerformLayout();

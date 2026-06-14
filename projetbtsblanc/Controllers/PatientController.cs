@@ -10,7 +10,10 @@ namespace projetbtsblanc.Controllers
         private PatientDAO _dao = new();
 
         public List<Patient> ObtenirTousLesPatients() => _dao.ObtenirTousLesPatients();
-        public void AjouterPatient(Patient p) => _dao.AjouterPatient(p);
+
+        // CORRIGÉ : Modifié pour retourner un 'int' au lieu de 'void'
+        public int AjouterPatient(Patient p) => _dao.AjouterPatient(p);
+
         public void ModifierPatient(Patient p) => _dao.ModifierPatient(p);
         public void SupprimerPatient(int id) => _dao.SupprimerPatient(id);
 
@@ -24,14 +27,33 @@ namespace projetbtsblanc.Controllers
             return _dao.RechercherParNomEtAllergie(motCle, allergie);
         }
 
-        internal Patient ObtenirParId(int idPatient)
+        // Fait le pont entre la vue et le DAO
+        public void MettreAJourAllergies(int idPatient, List<string> libellesAllergies)
         {
-            throw new NotImplementedException();
+            _dao.MettreAJourAllergies(idPatient, libellesAllergies);
         }
 
-        internal object ObtenirHistorique(int idPatient)
+        // délègue au DAO
+        public Patient ObtenirParId(int idPatient)
         {
-            throw new NotImplementedException();
+            return _dao.ObtenirParId(idPatient);
+        }
+
+        // retourne l'historique des ordonnances du patient
+        public List<Ordonnance> ObtenirHistorique(int idPatient)
+        {
+            projetbtsblanc.DataAccess.OrdonnanceDAO ordoDao = null;
+            try
+            {
+                ordoDao = new projetbtsblanc.DataAccess.OrdonnanceDAO();
+                return ordoDao.ObtenirParPatient(idPatient);
+            }
+            catch (NotImplementedException nie)
+            {
+                // Fournir plus de contexte pour diagnostiquer l'origine du NotImplementedException
+                string typeInfo = ordoDao == null ? "(instanciation échouée)" : ordoDao.GetType().FullName + " - " + ordoDao.GetType().Assembly.FullName;
+                throw new NotImplementedException($"La méthode ObtenirParPatient n'est pas implémentée. Type réel: {typeInfo}", nie);
+            }
         }
     }
 }

@@ -1,86 +1,77 @@
-﻿using MySql.Data.MySqlClient;
+﻿using System;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
 using projetbtsblanc.Controllers;
 using projetbtsblanc.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace projetbtsblanc.Views
 {
     public partial class OrdonnanceDetailForm : Form
     {
-        private readonly int _idPatient;
+        private readonly Patient _patientConcerne;
         private readonly PatientController _controller;
-        // Le constructeur prend l'ID du patient à afficher.
-        // C'est la méthode classique pour passer un paramètre
-        // à un formulaire WinForms.
-        public OrdonnanceDetailForm(int idPatient)
+
+        public OrdonnanceDetailForm(Patient patient)
         {
             InitializeComponent();
-            _idPatient = idPatient;
+            _patientConcerne = patient;
             _controller = new PatientController();
-
             this.Load += PatientDetailForm_Load;
         }
+
         private void PatientDetailForm_Load(object sender, EventArgs e)
         {
             try
             {
-                ChargerPatient();
+                AfficherInfosPatient();
                 ChargerHistorique();
             }
-            catch (MySqlException ex)
-
+            catch (Exception ex) // Catch global pour éviter les crashs à l'affichage
             {
-                MessageBox.Show(
-                "Erreur base de données :\n" + ex.Message,
-                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur au chargement : " + ex.Message);
             }
         }
-        private void ChargerPatient()
+
+        private void AfficherInfosPatient()
         {
-            Patient p = _controller.ObtenirParId(_idPatient);
-            if (p == null)
-            {
-                MessageBox.Show("Patient introuvable.", "Erreur");
-                this.Close();
-                return;
-            }
-            this.Text = "Fiche : " + p.Prenom + " " + p.Nom;
-            lblNom.Text = p.Nom;
-            lblPrenom.Text = p.Prenom;
-            lblDateNaissance.Text = p.DateNaissance.ToString("dd/MM/yyyy");
-            lblAge.Text = p.CalculerAge() + " ans";
-            lblNumeroSecu.Text = p.NumeroSecu;
-            lstAllergies.DataSource = p.Allergies;
-        } //accolade de fin de la méthode ChargerPatient
+            this.Text = "Fiche : " + _patientConcerne.Prenom + " " + _patientConcerne.Nom;
+            lblNom.Text = _patientConcerne.Nom;
+            lblPrenom.Text = _patientConcerne.Prenom;
+            lblDateNaissance.Text = _patientConcerne.DateNaissance.ToString("dd/MM/yyyy");
+            lblAge.Text = _patientConcerne.CalculerAge() + " ans";
+            lblNumeroSecu.Text = _patientConcerne.NumeroSecu;
+            lstAllergies.DataSource = _patientConcerne.Allergies;
+        }
         private void ChargerHistorique()
         {
-            var historique = _controller.ObtenirHistorique(_idPatient);
-            dgvHistorique.DataSource = historique;
-            PersonnaliserColonnesHistorique();
-        }
-        private void PersonnaliserColonnesHistorique()
-        {
-            if (dgvHistorique.Columns.Count == 0) return;
-            dgvHistorique.Columns["Id"].Visible = false;
-            dgvHistorique.Columns["DateEmission"].HeaderText = "Date";
-            dgvHistorique.Columns["DateEmission"]
-            .DefaultCellStyle.Format = "dd/MM/yyyy";
-            dgvHistorique.Columns["MedecinNom"].HeaderText = "Médecin";
-            dgvHistorique.Columns["MedecinSpecialite"].HeaderText = "Spécialité";
+            // 1. On récupère les données via le contrôleur
+            var historique = _controller.ObtenirHistorique(_patientConcerne.Id);
+
+            // 2. On crée une liste "plate" exprès pour l'affichage (ViewModel)
+            var historiqueAffiche = new List<dynamic>();
+            foreach (var ordo in historique)
+            {
+                historiqueAffiche.Add(new
+                {
+                    Date = ordo.DateEmission.ToString("dd/MM/yyyy"),
+                    Médecin = ordo.Medecin != null ? ordo.Medecin.Nom : "Non renseigné"
+                });
+            }
+
+            // 3. Remise à zéro totale du tableau pour effacer les fantômes du Designer
+            dgvHistorique.DataSource = null;
+            dgvHistorique.Columns.Clear();
+
+            // 4. On demande au tableau de se générer UNIQUEMENT à partir de notre liste plate
+            dgvHistorique.AutoGenerateColumns = true;
+            dgvHistorique.DataSource = historiqueAffiche;
+
+            // 5. Paramètres visuels stricts
+            dgvHistorique.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvHistorique.ReadOnly = true;
+            dgvHistorique.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvHistorique.AllowUserToAddRows = false;
-            dgvHistorique.SelectionMode =
-            DataGridViewSelectionMode.FullRowSelect;
         }
-        private void btnFermer_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-    } //accolade de fin de la classe PatientDetailForm
-} 
+        private void btnFermer_Click(object sender, EventArgs e) => this.Close();
+    }
+}
