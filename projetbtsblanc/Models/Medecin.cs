@@ -2,7 +2,7 @@
 
 namespace projetbtsblanc.Models
 {
-    // "personne" indique que Medecin hérite de la classe Personne
+    // "personne" indique que Medecin hérite de tous les attributs de la classe Personne
     public class Medecin : Personne
     {
         // On ne garde que les propriétés uniques au Médecin
@@ -22,12 +22,15 @@ namespace projetbtsblanc.Models
         {
         }
 
-        // On redéfinit la présentation spécifiquement pour le médecin
-        // Cela renvoie "Dr NOM, Spécialité"
+        // polymorphisme : écrase (override) la méthode de présentation du parent
+        // Cela renvoie une chaine de caractère adaptée au statut du médecin : "Dr NOM, Spécialité"
         public override string Presentation()
         {
             return $"Dr {Nom}, {Specialite}";
         }
+
+        //polymorphisme : on écrase la méthode ToString par défaut de C#
+        // très utile pour que les listes déroulantes (combobox) affichent directement Dr.Nom plutôt que le nom technique de l'objet
         public override string ToString()
         {
             return $"Dr. {Nom}"; 

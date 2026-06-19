@@ -44,9 +44,11 @@ namespace projetbtsblanc.DataAccess
             return patients;
         }
 
-        // CRUD : CREATE 
+        // CRUD : CREATE --> ajoute un nouveau patient dans la BDD, la méthode retourne l'ID du patient ajouté
         public int AjouterPatient(Patient p)
         {
+
+            // SELECT LAST_INSERT_ID() est utilisé pour récupérer l'ID du dernier enregistrement inséré dans la table PATIENT
             string sql = "INSERT INTO PATIENT (nom, prenom, dateNaissance, numeroSecu, sexe, pathologies) " +
                          "VALUES (@nom, @prenom, @dateNaissance, @numeroSecu, @sexe, @pathologies); SELECT LAST_INSERT_ID();";
 
@@ -64,7 +66,7 @@ namespace projetbtsblanc.DataAccess
             }
         }
 
-        // CRUD : UPDATE 
+        // CRUD : UPDATE --> modifie les informations d'un patient existant dans la BDD
         public void ModifierPatient(Patient p)
         {
             string sql = "UPDATE PATIENT SET nom = @nom, prenom = @prenom, dateNaissance = @dateNaissance, " +
@@ -86,7 +88,7 @@ namespace projetbtsblanc.DataAccess
             }
         }
 
-        //  CRUD : DELETE 
+        //  CRUD : DELETE --> supprime un patient de la BDD en fonction de son ID
         public void SupprimerPatient(int id)
         {
             string sql = "DELETE FROM PATIENT WHERE numPatient = @id";
@@ -98,14 +100,19 @@ namespace projetbtsblanc.DataAccess
             }
         }
 
+        // Recherche par nom avec un mot-clé, retourne une liste de patients correspondant au critère
         public List<Patient> RechercherParNom(string motCle)
         {
             List<Patient> patients = new List<Patient>();
+
+            //l'opérateur LIKE permet de chercher des correspondances partielles dans les noms des patients, en utilisant le mot-clé fourni
             string sql = "SELECT numPatient, nom, prenom, dateNaissance, numeroSecu, sexe, pathologies FROM PATIENT WHERE nom LIKE @motCle ORDER BY nom, prenom";
 
             using (MySqlConnection cnx = DbConnexion.Ouvrir())
             using (MySqlCommand cmd = new(sql, cnx))
             {
+
+                //les % encadrent le mot clé pour dire à MySQL de chercher le mot clé n'importe où dans le nom du patient
                 cmd.Parameters.AddWithValue("@motCle", "%" + motCle + "%");
                 using (MySqlDataReader lecteur = cmd.ExecuteReader())
                 {
@@ -132,6 +139,7 @@ namespace projetbtsblanc.DataAccess
             return patients;
         }
 
+        //récupère la fiche complète d'un patient à partir de son ID, y compris ses allergies
         public Patient ObtenirParId(int id)
         {
             Patient patient = null;
@@ -165,9 +173,11 @@ namespace projetbtsblanc.DataAccess
             return patient;
         }
 
+        // méthode privée (utilisée uniquement par cette classe) pour charger les allergies d'un patient à partir de son ID
         private List<string> ChargerAllergies(int idPatient)
         {
             List<string> allergies = new();
+            //jointure sur la table de liaison ETRE_ALLERGIQUE pour récupérer les libellés des allergies associées au patient
             string sql = "SELECT a.libelle FROM ETRE_ALLERGIQUE ea " +
                          "JOIN ALLERGIE a ON a.codeAllergie = ea.codeAllergie " +
                          "WHERE ea.numPatient = @id ORDER BY a.libelle";
@@ -187,12 +197,14 @@ namespace projetbtsblanc.DataAccess
             return allergies;
         }
 
+        // Recherche des patients en combinant un nom et une allergie
         public List<Patient> RechercherParNomEtAllergie(string motCle, string libelleAllergie)
         {
             List<Patient> patients = new List<Patient>();
             string sql = "SELECT DISTINCT p.numPatient, p.nom, p.prenom, p.dateNaissance, p.numeroSecu, p.sexe, p.pathologies " +
                          "FROM PATIENT p ";
 
+            //construction dynamique de la requête SQL : on ajoute des bouts de phrase selon les critères de recherche choisis 
             if (libelleAllergie != null)
             {
                 sql += "JOIN ETRE_ALLERGIQUE ea ON p.numPatient = ea.numPatient " +
@@ -236,7 +248,7 @@ namespace projetbtsblanc.DataAccess
             return patients;
         }
 
-        // J'ai également corrigé le filtre combiné au cas où tu en aurais besoin
+        // recherche avancée (nom, allergie, num sécu). Variante de la méthode précédente, avec un paramètre supplémentaire pour le numéro de sécurité sociale
         public List<Patient> RechercherFiltreCombine(string motCle, string libelleAllergie, string numeroSecu)
         {
             List<Patient> patients = new List<Patient>();
@@ -286,7 +298,7 @@ namespace projetbtsblanc.DataAccess
             return patients;
         }
 
-        // NOUVELLE MÉTHODE : Met à jour les liens dans la table ETRE_ALLERGIQUE
+        // met à jour la liste des allergies cochées par un patient donné. On utilise la stratégie de suppression des anciennes allergies et d'insertion des nouvelles pour éviter les doublons
         public void MettreAJourAllergies(int idPatient, List<string> libellesAllergies)
         {
             using (MySqlConnection cnx = DbConnexion.Ouvrir())
@@ -303,15 +315,18 @@ namespace projetbtsblanc.DataAccess
                 if (libellesAllergies == null || libellesAllergies.Count == 0) return;
 
                 // 3. On insère les nouvelles allergies cochées
+                // L'utilisation d'un SELECT dans un INSERT permet de récupérer automatiquement l'ID de l'allergie via son nom
                 string sqlInsert = "INSERT INTO ETRE_ALLERGIQUE (numPatient, codeAllergie) " +
                                    "SELECT @idPatient, codeAllergie FROM ALLERGIE WHERE libelle = @libelle";
 
                 using (MySqlCommand cmdIns = new MySqlCommand(sqlInsert, cnx))
                 {
                     cmdIns.Parameters.AddWithValue("@idPatient", idPatient);
-                    // On prépare le paramètre libelle qu'on va changer dans la boucle
+                    
+                    // On ajoute le paramètre pour le libellé de l'allergie, qui sera mis à jour dans la boucle ci-des
                     cmdIns.Parameters.Add("@libelle", MySqlDbType.VarChar);
 
+                    // On exécute l'insertion pour chaque allergie cochée
                     foreach (string libelle in libellesAllergies)
                     {
                         cmdIns.Parameters["@libelle"].Value = libelle;

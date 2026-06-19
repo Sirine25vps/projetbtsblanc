@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GSB.Ordonnances.DataAccess;
 using MySql.Data.MySqlClient;
 using projetbtsblanc.Models;
-using GSB.Ordonnances.DataAccess;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.Intrinsics.X86;
+using System.Transactions;
 
 namespace projetbtsblanc.DataAccess
-{
+{ 
     public class OrdonnanceDAO
     {
-        // Enregistrement d'une ordonnance avec transaction
+        // Enregistrement d'une nouvelle ordonnance et ses lignes de médicaments en BDD
+        // Utilise une transaction SQL pour garantir que tout est sauvegardé en même temps, ou rien du tout.
         public void EnregistrerOrdonnance(Ordonnance ordonnance)
         {
             using (MySqlConnection cnx = DbConnexion.Ouvrir())
             {
+                //démarrage de la transaction : on bloque les modifications jusqu'à ce que tout soit validé
                 MySqlTransaction transaction = cnx.BeginTransaction();
 
                 try
                 {
-                    // Insertion de l'en-tête
+                    // Insertion de l'en-tête (la table ORDONNANCE)
+                    // SELECT_LAST_INSERT_ID() permet de récupérer le num de l'ordonnance qui vient d'être créée 
                     string sqlOrdonnance = "INSERT INTO ORDONNANCE (dateEmission, numMedecin, numPatient) " +
                                            "VALUES (@date, @idMed, @idPat); SELECT LAST_INSERT_ID();";
                     MySqlCommand cmdOrdo = new(sqlOrdonnance, cnx, transaction);
@@ -25,9 +31,10 @@ namespace projetbtsblanc.DataAccess
                     cmdOrdo.Parameters.AddWithValue("@idMed", ordonnance.Medecin.Id);
                     cmdOrdo.Parameters.AddWithValue("@idPat", ordonnance.Patient.Id);
 
+                    //on exécute et on récupère le nouveau numéro d'ordonnance généré par la base de données
                     int idOrdo = Convert.ToInt32(cmdOrdo.ExecuteScalar());
 
-                    // Insertion des lignes de prescription
+                    // Insertion des lignes de prescription (table CONTENIR)
                     foreach (var medoc in ordonnance.Medicaments)
                     {
                         string sqlLigne = "INSERT INTO CONTENIR (numOrdonnance, codeMedicament, posologie, dureeJours) " +
@@ -40,23 +47,26 @@ namespace projetbtsblanc.DataAccess
                         cmdLigne.Parameters.AddWithValue("@duree", 7);
                         cmdLigne.ExecuteNonQuery();
                     }
-
+                    // succès : on valide les modifications dans la BDD
                     transaction.Commit();
                 }
                 catch (Exception)
                 {
+                    // erreur : on annule toutes les modifications effectuées
                     transaction.Rollback();
-                    throw;
+                    throw; //on relance l'erreur pour que l'interface affiche un message d'erreur
                 }
             }
         }
 
-        // Liste globale des ordonnances
+        // Récupère la liste globale de toutes les ordonnances avec les infos du médecin et du patient 
         public List<Ordonnance> ObtenirToutes()
         {
             List<Ordonnance> liste = new();
             using (MySqlConnection cnx = DbConnexion.Ouvrir())
             {
+
+                //requête SQL avec des JOIN pour rassembler les données éparpillées dans 3 tables différentes
                 string sql = "SELECT o.numOrdonnance, o.dateEmission, " +
                              "p.numPatient, p.nom, p.prenom, " +
                              "m.numMedecin, m.nom AS nomMedecin " +
@@ -70,6 +80,8 @@ namespace projetbtsblanc.DataAccess
                 {
                     while (r.Read())
                     {
+
+                        // on construit l'objet complet avec les infos du patient et du médecin, mais pas encore les médicaments (pour éviter de faire trop de requêtes SQL)
                         Ordonnance ordo = new Ordonnance
                         {
                             Id = r.GetInt32("numOrdonnance"),
@@ -96,7 +108,7 @@ namespace projetbtsblanc.DataAccess
             return liste;
         }
 
-        // Détails des médicaments d'une ordonnance
+        // Récupère les détails des médicaments d'une ordonnance spécifique
         public List<Medicament> ObtenirMedicamentsParOrdonnance(int idOrdonnance)
         {
             List<Medicament> liste = new();
@@ -167,14 +179,14 @@ namespace projetbtsblanc.DataAccess
                     }
                 }
             }
-
+            //si l'ordonnance existe, on récupère la liste des médicaments associés
             if (ordo != null)
                 ordo.Medicaments = ObtenirMedicamentsParOrdonnance(id);
 
             return ordo;
         }
 
-        // Supprimer une ordonnance (et ses lignes via cascade ou manuellement)
+        // Supprime proprement une ordonnance et tout son contenu de la base de données
         public void SupprimerOrdonnance(int id)
         {
             using (MySqlConnection cnx = DbConnexion.Ouvrir())
@@ -182,7 +194,7 @@ namespace projetbtsblanc.DataAccess
                 MySqlTransaction transaction = cnx.BeginTransaction();
                 try
                 {
-                    // Supprimer d'abord les lignes contenir
+                    // Supprimer d'abord les lignes contenir (pour éviter les erreurs de clé étrangère)
                     string sqlLignes = "DELETE FROM CONTENIR WHERE numOrdonnance = @id";
                     MySqlCommand cmdLignes = new(sqlLignes, cnx, transaction);
                     cmdLignes.Parameters.AddWithValue("@id", id);
@@ -249,7 +261,7 @@ namespace projetbtsblanc.DataAccess
                 }
             }
 
-            // Remplir les médicaments pour chaque ordonnance
+            // Remplir les médicaments pour chaque ordonnance trouvé
             foreach (var ordo in liste)
             {
                 ordo.Medicaments = ObtenirMedicamentsParOrdonnance(ordo.Id);
@@ -258,7 +270,7 @@ namespace projetbtsblanc.DataAccess
             return liste;
         }
 
-        // Nouvelle méthode : Obtenir les lignes de prescription formatées pour l'affichage
+        // Construit les lignes de prescription prêtes à être affichées directement dans le tableau (DataGridView) de l'interface
         public List<LignePrescription> ObtenirLignes(int idOrdonnance)
         {
             List<LignePrescription> lesLignes = new List<LignePrescription>();
